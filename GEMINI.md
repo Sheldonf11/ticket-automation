@@ -36,3 +36,9 @@ The project consists of two independent, standalone directories. **Do not use a 
 
 ### Architecture
 - **Isolation**: Keep `client` and `server` strictly decoupled with their own dependency management.
+
+### Backend & Authentication
+- **Better Auth**: Implemented via `better-auth/node` using the `toNodeHandler(auth)` mounted at `/api/auth/*splat`.
+- **CORS Requirements**: API must be configured with `credentials: true` and an explicit `origin` (falling back to `http://localhost:5173` via `process.env.FRONTEND_URL`). Wildcard `*` origins will break session cookies securely required by Better Auth.
+- **Middleware**: Protected routes use the `requireAuth` middleware which attaches `req.user` and `req.session`.
+- **Express Types**: Custom Request properties (like `user` and `session`) are globally declared in `server/src/types/express.d.ts`. Avoid inline module augmentations.
