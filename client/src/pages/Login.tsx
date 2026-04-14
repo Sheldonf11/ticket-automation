@@ -1,29 +1,43 @@
 import React, { useState } from 'react';
 import { Navigate } from 'react-router';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import * as z from 'zod';
 import { signIn, useSession } from '../lib/auth-client';
+
+const loginSchema = z.object({
+  email: z.string().email('Please enter a valid email address'),
+  password: z.string().min(6, 'Password must be at least 6 characters'),
+});
+
+type LoginFormValues = z.infer<typeof loginSchema>;
 
 export const Login: React.FC = () => {
   const { data: session } = useSession();
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<LoginFormValues>({
+    resolver: zodResolver(loginSchema),
+  });
+
   // If already signed in, declarative navigation handles the route automatically
-  // This solves race conditions between the SPA router and the auth-client cache update
   if (session) {
     return <Navigate to="/" replace />;
   }
 
-  const handleLogin = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const onSubmit = async (data: LoginFormValues) => {
     setIsLoading(true);
     setError('');
 
     await signIn.email(
       {
-        email,
-        password,
+        email: data.email,
+        password: data.password,
       },
       {
         onSuccess: () => {
@@ -46,17 +60,17 @@ export const Login: React.FC = () => {
         
         {error && <div className="auth-error-banner">{error}</div>}
 
-        <form onSubmit={handleLogin} className="auth-form">
+        <form onSubmit={handleSubmit(onSubmit)} className="auth-form" noValidate>
           <div className="input-group">
             <label htmlFor="email">Email</label>
             <input
               id="email"
               type="email"
-              required
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              {...register('email')}
               placeholder="agent@helphesk.com"
+              className={errors.email ? 'input-error' : ''}
             />
+            {errors.email && <span className="validation-error">{errors.email.message}</span>}
           </div>
           
           <div className="input-group">
@@ -64,11 +78,11 @@ export const Login: React.FC = () => {
             <input
               id="password"
               type="password"
-              required
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              {...register('password')}
               placeholder="••••••••"
+              className={errors.password ? 'input-error' : ''}
             />
+            {errors.password && <span className="validation-error">{errors.password.message}</span>}
           </div>
           
           <button type="submit" disabled={isLoading} className="primary-button glowing-btn">
