@@ -25,7 +25,6 @@ export const Login: React.FC = () => {
     resolver: zodResolver(loginSchema),
   });
 
-  // If already signed in, declarative navigation handles the route automatically
   if (session) {
     return <Navigate to="/" replace />;
   }
@@ -35,15 +34,9 @@ export const Login: React.FC = () => {
     setError('');
 
     await signIn.email(
+      { email: data.email, password: data.password },
       {
-        email: data.email,
-        password: data.password,
-      },
-      {
-        onSuccess: () => {
-          setIsLoading(false);
-          // Component will re-render and navigate declaratively via the `if (session)` check
-        },
+        onSuccess: () => setIsLoading(false),
         onError: (ctx) => {
           setIsLoading(false);
           setError(ctx.error.message || 'Login failed. Please check your credentials.');
@@ -53,39 +46,48 @@ export const Login: React.FC = () => {
   };
 
   return (
-    <div className="auth-layout">
-      <div className="auth-card glass-panel">
-        <h2 className="auth-title">Welcome Back</h2>
-        <p className="auth-subtitle">Log in to manage your tickets securely</p>
-        
-        {error && <div className="auth-error-banner">{error}</div>}
+    <div className="flex items-center justify-center h-screen relative overflow-hidden">
+      {/* Background Pulse */}
+      <div className="absolute w-[600px] h-[600px] bg-[conic-gradient(from_180deg_at_50%_50%,#2a8af6_0deg,#a853ba_180deg,#e92a67_360deg)] blur-[120px] opacity-15 rounded-[50%] animate-[pulse_10s_ease-in-out_infinite_alternate]" style={{ transformOrigin: 'center' }}></div>
 
-        <form onSubmit={handleSubmit(onSubmit)} className="auth-form" noValidate>
-          <div className="input-group">
-            <label htmlFor="email">Email</label>
+      <div className="w-full max-w-[420px] p-12 rounded-3xl relative z-10 flex flex-col gap-6 bg-panel-bg backdrop-blur-md border border-panel-border shadow-[0_8px_32px_0_rgba(0,0,0,0.3)]">
+        <div>
+          <h2 className="text-[2rem] font-semibold tracking-tight mb-2">Welcome Back</h2>
+          <p className="text-text-muted text-[0.95rem]">Log in to manage your tickets securely</p>
+        </div>
+        
+        {error && (
+          <div className="bg-error/10 text-error p-4 rounded-lg border border-error/20 text-[0.9rem]">
+            {error}
+          </div>
+        )}
+
+        <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-5" noValidate>
+          <div className="flex flex-col gap-2">
+            <label htmlFor="email" className="text-[0.85rem] font-medium text-text-muted">Email</label>
             <input
               id="email"
               type="email"
               {...register('email')}
               placeholder="agent@helphesk.com"
-              className={errors.email ? 'input-error' : ''}
+              className={`p-[0.85rem_1rem] rounded-xl bg-black/20 border text-text-main font-inherit text-base transition-all duration-200 outline-none focus:border-accent focus:shadow-[0_0_0_3px_rgba(94,106,210,0.25)] ${errors.email ? 'border-error/50 shadow-[0_0_0_3px_rgba(248,81,73,0.15)]' : 'border-panel-border'}`}
             />
-            {errors.email && <span className="validation-error">{errors.email.message}</span>}
+            {errors.email && <span className="text-error text-[0.8rem] mt-1">{errors.email.message}</span>}
           </div>
           
-          <div className="input-group">
-            <label htmlFor="password">Password</label>
+          <div className="flex flex-col gap-2">
+            <label htmlFor="password" className="text-[0.85rem] font-medium text-text-muted">Password</label>
             <input
               id="password"
               type="password"
               {...register('password')}
               placeholder="••••••••"
-              className={errors.password ? 'input-error' : ''}
+              className={`p-[0.85rem_1rem] rounded-xl bg-black/20 border text-text-main font-inherit text-base transition-all duration-200 outline-none focus:border-accent focus:shadow-[0_0_0_3px_rgba(94,106,210,0.25)] ${errors.password ? 'border-error/50 shadow-[0_0_0_3px_rgba(248,81,73,0.15)]' : 'border-panel-border'}`}
             />
-            {errors.password && <span className="validation-error">{errors.password.message}</span>}
+            {errors.password && <span className="text-error text-[0.8rem] mt-1">{errors.password.message}</span>}
           </div>
           
-          <button type="submit" disabled={isLoading} className="primary-button glowing-btn">
+          <button type="submit" disabled={isLoading} className="bg-accent text-white border-none p-[0.9rem] rounded-xl font-medium text-base cursor-pointer transition-all duration-200 mt-2 hover:not-disabled:bg-accent-hover hover:not-disabled:-translate-y-px disabled:opacity-70 disabled:cursor-not-allowed">
             {isLoading ? 'Signing In...' : 'Sign In'}
           </button>
         </form>
@@ -93,3 +95,4 @@ export const Login: React.FC = () => {
     </div>
   );
 };
+

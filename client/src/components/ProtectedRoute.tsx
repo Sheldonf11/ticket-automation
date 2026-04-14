@@ -11,8 +11,8 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
 
   if (isPending) {
     return (
-      <div className="loader-container">
-        <div className="loader"></div>
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="w-10 h-10 border-4 border-white/10 border-t-accent rounded-full animate-spin"></div>
       </div>
     );
   }
@@ -23,3 +23,4 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
 
   return <>{children}</>;
 };
+
