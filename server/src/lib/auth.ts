@@ -4,6 +4,7 @@ import { APIError } from "better-auth/api";
 import prisma from "../db";
 
 export const auth = betterAuth({
+  trustedOrigins: [process.env.FRONTEND_URL as string],
   database: prismaAdapter(prisma, {
     provider: "postgresql",
   }),

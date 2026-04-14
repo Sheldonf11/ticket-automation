@@ -10,14 +10,14 @@ dotenv.config();
 const app = express();
 const port = process.env.PORT || 3001;
 
-// Better Auth handler MUST be mounted before express.json()
-app.all("/api/auth/*splat", toNodeHandler(auth));
-
 app.use(cors({ 
-  origin: process.env.FRONTEND_URL || "http://localhost:5173", 
+  origin: process.env.FRONTEND_URL, 
   credentials: true 
 }));
 app.use(express.json());
+
+// Better Auth handler MUST be mounted before other routes but AFTER cors
+app.all("/api/auth/*splat", toNodeHandler(auth));
 
 app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() });

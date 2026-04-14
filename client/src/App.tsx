@@ -1,36 +1,22 @@
-import { useEffect, useState } from 'react'
+import { Routes, Route } from 'react-router';
+import { Login } from './pages/Login';
+import { Home } from './pages/Home';
+import { ProtectedRoute } from './components/ProtectedRoute';
 
 function App() {
-  const [health, setHealth] = useState<string>('Checking...')
-
-  useEffect(() => {
-    fetch('http://localhost:3001/api/health')
-      .then(res => res.json())
-      .then(data => setHealth(data.status))
-      .catch(err => {
-        console.error('Failed to fetch health status:', err)
-        setHealth('Server Offline')
-      })
-  }, [])
-
   return (
-    <div style={{ 
-      display: 'flex', 
-      flexDirection: 'column',
-      justifyContent: 'center', 
-      alignItems: 'center', 
-      height: '100vh',
-      fontFamily: 'sans-serif' 
-    }}>
-      <h1>Helpdesk</h1>
-      <p style={{ 
-        color: health === 'ok' ? 'green' : 'red',
-        fontWeight: 'bold'
-      }}>
-        Backend Status: {health}
-      </p>
-    </div>
-  )
+    <Routes>
+      <Route path="/login" element={<Login />} />
+      <Route 
+        path="/" 
+        element={
+          <ProtectedRoute>
+            <Home />
+          </ProtectedRoute>
+        } 
+      />
+    </Routes>
+  );
 }
 
-export default App
+export default App;
