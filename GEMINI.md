@@ -25,8 +25,8 @@ The project consists of two independent, standalone directories. **Do not use a 
 - `src/components/ui/` — shadcn UI components (Button, Card, Input, Label, Alert, Badge)
 - `src/lib/utils.ts` — `cn()` utility (clsx + tailwind-merge)
 - `src/lib/auth-client.ts` — Better Auth client
-- `src/pages/` — Page components (Login, Home)
-- `src/components/` — Shared components (ProtectedRoute)
+- `src/pages/` — Page components (Login, Home, Users)
+- `src/components/` — Shared components (ProtectedRoute, AdminRoute)
 
 ### Path Aliases
 - `@/*` maps to `./src/*` — configured in both `tsconfig.json` (for shadcn CLI) and `tsconfig.app.json` (for TypeScript), plus `vite.config.ts` (for Vite bundling).
@@ -87,10 +87,14 @@ The project consists of two independent, standalone directories. **Do not use a 
 - Exports `signIn`, `signUp`, `signOut`, `useSession` for use across components.
 - `useSession()` returns `{ data: session, isPending }` — used by `ProtectedRoute` and page components.
 
-### Protected Routes (`client/src/components/ProtectedRoute.tsx`)
-- Wraps authenticated pages (e.g., `<Home />`).
-- Shows a loading spinner (`Loader2`) while `isPending` is true.
-- Redirects to `/login` if no session exists.
+### Protected Routes (`client/src/components/ProtectedRoute.tsx` & `AdminRoute.tsx`)
+- `ProtectedRoute`: Wraps standard authenticated pages (e.g., `<Home />`). Details:
+  - Shows a loading spinner (`Loader2`) while `isPending` is true.
+  - Redirects to `/login` if no session exists.
+- `AdminRoute`: Wraps admin-only pages (e.g., `<Users />`). Details:
+  - Validates authentication state identically to `ProtectedRoute`.
+  - Performs an additional strict check for `session.user.role === 'admin'`.
+  - Redirects authenticated but non-admin users to `/`.
 
 ### Required Environment Variables (`server/.env`)
 | Variable | Description |

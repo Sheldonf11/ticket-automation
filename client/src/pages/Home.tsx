@@ -1,10 +1,10 @@
 import React from 'react';
-import { useNavigate } from 'react-router';
+import { useNavigate, Link } from 'react-router';
 import { useSession, signOut } from '@/lib/auth-client';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { LogOut } from 'lucide-react';
+import { LogOut, Users } from 'lucide-react';
 
 export const Home: React.FC = () => {
   const { data: session } = useSession();
@@ -29,6 +29,13 @@ export const Home: React.FC = () => {
           <h2 className="text-base font-semibold tracking-tight">Helphesk</h2>
         </div>
         <div className="flex items-center gap-4">
+          {/* @ts-ignore: role is an additionalField not yet patched in client types */}
+          {session?.user?.role === 'admin' && (
+            <Link to="/users" className="flex items-center gap-1.5 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">
+              <Users className="size-3.5" />
+              Users
+            </Link>
+          )}
           <div className="flex items-center gap-3">
             <span className="text-sm font-medium">{session?.user?.name || 'Agent'}</span>
             <Badge variant="secondary" className="uppercase tracking-wider">
