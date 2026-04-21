@@ -1,6 +1,7 @@
 import React from 'react';
 import { Navigate } from 'react-router';
-import { useSession } from '../lib/auth-client';
+import { useSession } from '@/lib/auth-client';
+import { Loader2 } from 'lucide-react';
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
@@ -11,8 +12,8 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
 
   if (isPending) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="w-10 h-10 border-4 border-white/10 border-t-accent rounded-full animate-spin"></div>
+      <div className="flex items-center justify-center min-h-screen bg-background">
+        <Loader2 className="size-8 animate-spin text-muted-foreground" />
       </div>
     );
   }
@@ -23,4 +24,3 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
 
   return <>{children}</>;
 };
-
