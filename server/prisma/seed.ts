@@ -36,6 +36,27 @@ async function main() {
       console.error("Error creating admin user:", error?.message || error);
     }
   }
+
+  try {
+    const agentEmail = "agent@example.com";
+    const agentPassword = "password123";
+    const agentRes = await auth.api.signUpEmail({
+      body: {
+        email: agentEmail,
+        password: agentPassword,
+        name: "Agent User",
+        role: Role.agent,
+      },
+    });
+    
+    console.log(`Successfully seeded agent: ${agentRes.user.email} (Role: ${agentRes.user.role})`);
+  } catch (error: any) {
+    if (error?.message?.includes("already exists")) {
+      console.log(`Agent user agent@example.com already exists. Skipping.`);
+    } else {
+      console.error("Error creating agent user:", error?.message || error);
+    }
+  }
 }
 
 main()

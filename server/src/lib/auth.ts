@@ -9,6 +9,7 @@ export const auth = betterAuth({
     provider: "postgresql",
   }),
   rateLimit: {
+    enabled: process.env.NODE_ENV === "production",
     window: 60, // 60 seconds
     max: 100,
   },

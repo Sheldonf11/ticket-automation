@@ -33,10 +33,15 @@ The project consists of two independent, standalone directories. **Do not use a 
 - **Do NOT use `baseUrl`** — it is deprecated in TypeScript 6.0+. Use `paths` only.
 - Always use `@/` imports in components (e.g., `import { Button } from '@/components/ui/button'`).
 
-## Development Commands
-- **Root**: None (Use local directory commands).
+## Development & Testing Commands
+- **Root**: `bun run test:e2e` (Triggers Playwright test suite leveraging test database isolation).
 - **Client**: `cd client && bun run dev` (Starts Vite at http://localhost:5173).
 - **Server**: `cd server && bun run dev` (Starts Express at http://localhost:3001).
+
+### E2E Testing Architecture
+- **Framework**: Playwright via `@playwright/test`.
+- **Isolation Strategy**: The root `playwright.config.ts` dynamically spins up decoupled testing servers (Backend: `3002`, Frontend: `5174`) so development runs aren't interrupted.
+- **Database Provisioning**: The `e2e/global-setup.ts` strictly enforces a clean test database (`helpdesk_test`) populated via `bunx prisma db push --force-reset` combined with an automatic admin `db:seed` execution per testing cycle.
 
 ## Key Conventions
 - **Naming**: Use `camelCase` for variables/functions and `PascalCase` for React components.
@@ -66,6 +71,7 @@ The project consists of two independent, standalone directories. **Do not use a 
 - **Auth Method**: Email + password (`emailAndPassword: { enabled: true }`).
 - **User Roles**: Custom `role` field on the User model as an `additionalField` with type `["admin", "agent"]`, defaulting to `"agent"`. Defined as a Prisma enum `Role { admin, agent }`.
 - **Signup Restriction**: Public signups are **disabled** via a `databaseHooks.user.create.before` hook that throws `APIError("BAD_REQUEST")` unless `process.env.ALLOW_SEED_SIGNUP === "true"`. Only the seed script can create users.
+- **Rate Limiting**: Enforced via Better Auth explicitly only in production (`process.env.NODE_ENV === "production"`).
 - **Trusted Origins**: Set via `trustedOrigins: [process.env.FRONTEND_URL]`.
 - **Session Type**: Exported as `type Session = typeof auth.$Infer.Session` for use in middleware and type declarations.
 
