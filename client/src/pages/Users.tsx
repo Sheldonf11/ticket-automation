@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from 'react';
+import axios from 'axios';
+import { useQuery } from '@tanstack/react-query';
 import { AlertCircle, Loader2 } from 'lucide-react';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { AppNavbar } from '@/components/AppNavbar';
@@ -26,33 +27,19 @@ type UsersResponse = {
 
 const apiBaseUrl = import.meta.env.VITE_API_URL || 'http://localhost:3001';
 
-export const Users: React.FC = () => {
-  const [users, setUsers] = useState<User[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState('');
+const fetchUsers = async () => {
+  const response = await axios.get<UsersResponse>(`${apiBaseUrl}/api/users`, {
+    withCredentials: true,
+  });
 
-  useEffect(() => {
-    const fetchUsers = async () => {
-      try {
-        const response = await fetch(`${apiBaseUrl}/api/users`, {
-          credentials: 'include',
-        });
+  return response.data.users;
+};
 
-        if (!response.ok) {
-          throw new Error('Unable to load users.');
-        }
-
-        const data = (await response.json()) as UsersResponse;
-        setUsers(data.users);
-      } catch (err) {
-        setError(err instanceof Error ? err.message : 'Unable to load users.');
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchUsers();
-  }, []);
+export function Users() {
+  const { data: users = [], isLoading, error } = useQuery({
+    queryKey: ['users'],
+    queryFn: fetchUsers,
+  });
 
   return (
     <div className="flex flex-col min-h-screen bg-muted">
@@ -72,7 +59,9 @@ export const Users: React.FC = () => {
         {error && (
           <Alert variant="destructive">
             <AlertCircle className="size-4" />
-            <AlertDescription>{error}</AlertDescription>
+            <AlertDescription>
+              {error instanceof Error ? error.message : 'Unable to load users.'}
+            </AlertDescription>
           </Alert>
         )}
 
@@ -107,4 +96,4 @@ export const Users: React.FC = () => {
       </main>
     </div>
   );
-};
+}

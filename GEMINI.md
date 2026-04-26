@@ -12,6 +12,7 @@
 - **Icons**: Lucide React (`lucide-react`)
 - **Font**: Geist Variable (via `@fontsource-variable/geist`)
 - **API Architecture**: RESTful API
+- **Data Fetching**: Axios + TanStack Query (React Query)
 - **AI**: Anthropic Claude API (Planned for Phase 5)
 
 ## Project Structure
@@ -49,6 +50,9 @@ The project consists of two independent, standalone directories. **Do not use a 
 - **Components**: Always use shadcn UI components (Button, Input, Card, Badge, Alert, Label, etc.) instead of raw HTML elements with manual Tailwind classes.
 - **TypeScript**: Maintain strict type safety. Avoid `any`.
 - **API**: Backend healthcheck available at `/api/health`.
+- **Data Fetching**: Use **TanStack Query (React Query)** for state management and **Axios** for HTTP requests.
+  - **Axios Config**: Always include `withCredentials: true` to ensure Better Auth session cookies are transmitted.
+  - **Hooks**: Use `useQuery` for reads and `useMutation` for writes (POST/PUT/DELETE).
 
 ## Foundational Mandates
 ### Documentation & Research

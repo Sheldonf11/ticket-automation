@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Navigate } from 'react-router';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -18,7 +18,7 @@ const loginSchema = z.object({
 
 type LoginFormValues = z.infer<typeof loginSchema>;
 
-export const Login: React.FC = () => {
+export function Login() {
   const { data: session } = useSession();
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -173,4 +173,4 @@ export const Login: React.FC = () => {
       </div>
     </div>
   );
-};
+}

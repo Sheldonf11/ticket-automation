@@ -1,8 +1,7 @@
-import React from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { AppNavbar } from '@/components/AppNavbar';
 
-export const Home: React.FC = () => {
+export function Home() {
   return (
     <div className="flex flex-col min-h-screen bg-muted">
       <AppNavbar />
@@ -39,4 +38,4 @@ export const Home: React.FC = () => {
       </main>
     </div>
   );
-};
+}
