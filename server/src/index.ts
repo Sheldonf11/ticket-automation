@@ -3,9 +3,9 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import { toNodeHandler } from 'better-auth/node';
 import { auth } from './lib/auth';
+import usersRouter from './routes/users';
 import { requireAuth } from './middleware/requireAuth';
 import { requireAdmin } from './middleware/requireAdmin';
-import prisma from './db';
 
 dotenv.config();
 
@@ -20,9 +20,9 @@ if (missingVars.length > 0) {
 const app = express();
 const port = process.env.PORT || 3001;
 
-app.use(cors({ 
-  origin: process.env.FRONTEND_URL, 
-  credentials: true 
+app.use(cors({
+  origin: process.env.FRONTEND_URL,
+  credentials: true
 }));
 app.use(express.json({ limit: '1mb' }));
 
@@ -39,22 +39,7 @@ app.get('/api/me', requireAuth, (req, res) => {
   res.json({ user: req.user, session: safeSession });
 });
 
-app.get('/api/users', requireAuth, requireAdmin, async (req, res) => {
-  const users = await prisma.user.findMany({
-    select: {
-      id: true,
-      name: true,
-      email: true,
-      role: true,
-      createdAt: true,
-    },
-    orderBy: {
-      createdAt: 'asc',
-    },
-  });
-
-  res.json({ users });
-});
+app.use('/api/users', usersRouter);
 
 app.get('/api/admin', requireAdmin, (req, res) => {
   res.json({ status: 'admin area ok', user: req.user });

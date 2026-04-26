@@ -23,7 +23,8 @@
 
     /* Path aliases */
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": ["./src/*"],
+      "core": ["../core/src/index.ts"]
     }
   },
   "include": ["src"]

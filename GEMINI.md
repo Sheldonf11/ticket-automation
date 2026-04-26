@@ -21,6 +21,7 @@ The project consists of two independent, standalone directories. **Do not use a 
 - `/client`: Independent React + TypeScript frontend.
 - `/server`: Independent Express + TypeScript backend.
 - Both maintain their own `package.json`, `bun.lock`, and `node_modules`.
+- `/core`: Shared local package for reusable runtime and schema code. It is not a Bun workspace; client and server reference it explicitly via a local file dependency.
 
 ### Client Directory Layout
 - `components.json` — shadcn configuration (style: base-nova, rsc: false)
@@ -55,6 +56,7 @@ The project consists of two independent, standalone directories. **Do not use a 
 - **Data Fetching**: Use **TanStack Query (React Query)** for state management and **Axios** for HTTP requests.
   - **Axios Config**: Always include `withCredentials: true` to ensure Better Auth session cookies are transmitted.
   - **Hooks**: Use `useQuery` for reads and `useMutation` for writes (POST/PUT/DELETE).
+- **Shared Zod Schemas**: Define shared Zod schemas in the `/core` package and import them from both `/client` and `/server` instead of duplicating validation logic in each app.
 - **Component Testing**:
   - Use **Vitest** and **React Testing Library** for unit and component-level testing.
   - Test files must use the `.test.tsx` extension.
@@ -122,4 +124,3 @@ The project consists of two independent, standalone directories. **Do not use a 
 | `ADMIN_EMAIL` | Initial admin user email (used by seed script) |
 | `ADMIN_PASSWORD` | Initial admin user password (used by seed script) |
 | `ALLOW_SEED_SIGNUP` | Set to `"true"` only during seeding; defaults to `"false"` |
-

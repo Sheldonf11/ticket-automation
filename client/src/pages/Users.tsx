@@ -1,127 +1,64 @@
-import axios from 'axios';
-import { useQuery } from '@tanstack/react-query';
-import { AlertCircle } from 'lucide-react';
-import { Alert, AlertDescription } from '@/components/ui/alert';
+import { UserPlus } from 'lucide-react';
+import { useState } from 'react';
 import { AppNavbar } from '@/components/AppNavbar';
-import { Badge } from '@/components/ui/badge';
-import { Skeleton } from '@/components/ui/skeleton';
+import { CreateUserForm } from '@/components/CreateUserForm';
+import { UsersTable } from '@/components/UsersTable';
+import { Button } from '@/components/ui/button';
 import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table';
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
 
-type User = {
-  id: string;
-  name: string | null;
-  email: string;
-  role: string;
-  createdAt: string;
-};
 
-type UsersResponse = {
-  users: User[];
-};
 
-const apiBaseUrl = import.meta.env.VITE_API_URL || 'http://localhost:3001';
-
-const fetchUsers = async () => {
-  const response = await axios.get<UsersResponse>(`${apiBaseUrl}/api/users`, {
-    withCredentials: true,
-  });
-
-  return response.data.users;
-};
 
 export function Users() {
-  const { data: users = [], isLoading, error } = useQuery({
-    queryKey: ['users'],
-    queryFn: fetchUsers,
-  });
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
 
   return (
     <div className="flex flex-col min-h-screen bg-muted">
       <AppNavbar />
 
       <main className="flex-1 p-8 mx-auto w-full max-w-6xl">
-        <header>
-          <h1 className="text-2xl font-bold mb-6">Users</h1>
+        <header className="mb-6 flex items-center justify-between gap-4">
+          <h1 className="text-2xl font-bold">Users</h1>
+          <Button type="button" onClick={() => setIsCreateModalOpen(true)}>
+            <UserPlus className="size-4" />
+            New User
+          </Button>
         </header>
 
-        {isLoading && (
-          <div className="rounded-lg border bg-background">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Name</TableHead>
-                  <TableHead>Email</TableHead>
-                  <TableHead>Role</TableHead>
-                  <TableHead>Created</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {Array.from({ length: 5 }).map((_, index) => (
-                  <TableRow key={index}>
-                    <TableCell>
-                      <Skeleton className="h-4 w-32" />
-                    </TableCell>
-                    <TableCell>
-                      <Skeleton className="h-4 w-48" />
-                    </TableCell>
-                    <TableCell>
-                      <Skeleton className="h-5 w-16 rounded-full" />
-                    </TableCell>
-                    <TableCell>
-                      <Skeleton className="h-4 w-24" />
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </div>
-        )}
-
-        {error && (
-          <Alert variant="destructive">
-            <AlertCircle className="size-4" />
-            <AlertDescription>
-              {error instanceof Error ? error.message : 'Unable to load users.'}
-            </AlertDescription>
-          </Alert>
-        )}
-
-        {!isLoading && !error && (
-          <div className="rounded-lg border bg-background">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Name</TableHead>
-                  <TableHead>Email</TableHead>
-                  <TableHead>Role</TableHead>
-                  <TableHead>Created</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {users.map((user) => (
-                  <TableRow key={user.id}>
-                    <TableCell className="font-medium">{user.name || 'Unknown'}</TableCell>
-                    <TableCell>{user.email}</TableCell>
-                    <TableCell>
-                      <Badge variant={user.role === 'admin' ? 'default' : 'secondary'}>
-                        {user.role}
-                      </Badge>
-                    </TableCell>
-                    <TableCell>{new Date(user.createdAt).toLocaleDateString()}</TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </div>
-        )}
+        <UsersTable />
       </main>
+
+      <Dialog
+        open={isCreateModalOpen}
+        onOpenChange={setIsCreateModalOpen}
+      >
+        <DialogContent className="overflow-hidden p-0 sm:max-w-lg">
+          <DialogHeader className="border-b bg-muted/40 px-6 py-5">
+            <div className="flex items-start gap-3">
+              <div className="flex size-9 shrink-0 items-center justify-center rounded-lg border bg-background">
+                <UserPlus className="size-4" />
+              </div>
+              <div className="min-w-0">
+                <DialogTitle className="text-base">Create user</DialogTitle>
+                <DialogDescription className="mt-1">
+                  Add a new agent account with email and password access.
+                </DialogDescription>
+              </div>
+            </div>
+          </DialogHeader>
+
+          <CreateUserForm
+            onSuccess={() => setIsCreateModalOpen(false)}
+            onCancel={() => setIsCreateModalOpen(false)}
+          />
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
