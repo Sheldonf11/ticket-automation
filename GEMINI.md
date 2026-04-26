@@ -13,6 +13,7 @@
 - **Font**: Geist Variable (via `@fontsource-variable/geist`)
 - **API Architecture**: RESTful API
 - **Data Fetching**: Axios + TanStack Query (React Query)
+- **Testing**: Vitest + React Testing Library (Component Testing) & Playwright (E2E)
 - **AI**: Anthropic Claude API (Planned for Phase 5)
 
 ## Project Structure
@@ -37,6 +38,7 @@ The project consists of two independent, standalone directories. **Do not use a 
 ## Development & Testing Commands
 - **Root**: `bun run test:e2e` (Triggers Playwright test suite leveraging test database isolation).
 - **Client**: `cd client && bun run dev` (Starts Vite at http://localhost:5173).
+- **Client (Tests)**: `cd client && bun run test:component` (Runs Vitest component tests).
 - **Server**: `cd server && bun run dev` (Starts Express at http://localhost:3001).
 
 ### E2E Testing Architecture
@@ -53,6 +55,10 @@ The project consists of two independent, standalone directories. **Do not use a 
 - **Data Fetching**: Use **TanStack Query (React Query)** for state management and **Axios** for HTTP requests.
   - **Axios Config**: Always include `withCredentials: true` to ensure Better Auth session cookies are transmitted.
   - **Hooks**: Use `useQuery` for reads and `useMutation` for writes (POST/PUT/DELETE).
+- **Component Testing**:
+  - Use **Vitest** and **React Testing Library** for unit and component-level testing.
+  - Test files must use the `.test.tsx` extension.
+  - **Utilities**: Always use `renderWithProviders` from `@/test/render` to ensure components are wrapped with `QueryClientProvider` and `MemoryRouter`.
 
 ## Foundational Mandates
 ### Documentation & Research
