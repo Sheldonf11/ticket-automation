@@ -1,54 +1,11 @@
 import React from 'react';
-import { useNavigate, Link } from 'react-router';
-import { useSession, signOut } from '@/lib/auth-client';
-import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { LogOut, Users } from 'lucide-react';
+import { AppNavbar } from '@/components/AppNavbar';
 
 export const Home: React.FC = () => {
-  const { data: session } = useSession();
-  const navigate = useNavigate();
-
-  const handleSignOut = async () => {
-    await signOut({
-      fetchOptions: {
-        onSuccess: () => navigate('/login'),
-      },
-    });
-  };
-
   return (
     <div className="flex flex-col min-h-screen bg-muted">
-      {/* Navbar */}
-      <nav className="flex items-center justify-between px-8 h-14 bg-background border-b border-border sticky top-0 z-50">
-        <div className="flex items-center gap-3">
-          <div className="h-7 w-7 rounded-lg bg-primary flex items-center justify-center">
-            <span className="text-primary-foreground font-bold text-xs">H</span>
-          </div>
-          <h2 className="text-base font-semibold tracking-tight">Helphesk</h2>
-        </div>
-        <div className="flex items-center gap-4">
-          {/* @ts-ignore: role is an additionalField not yet patched in client types */}
-          {session?.user?.role === 'admin' && (
-            <Link to="/users" className="flex items-center gap-1.5 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">
-              <Users className="size-3.5" />
-              Users
-            </Link>
-          )}
-          <div className="flex items-center gap-3">
-            <span className="text-sm font-medium">{session?.user?.name || 'Agent'}</span>
-            <Badge variant="secondary" className="uppercase tracking-wider">
-              {/* @ts-ignore: role is legally an additionalField not yet patched in client types */}
-              {session?.user?.role || 'Agent'}
-            </Badge>
-          </div>
-          <Button variant="outline" size="sm" onClick={handleSignOut}>
-            <LogOut className="size-3.5" />
-            Sign Out
-          </Button>
-        </div>
-      </nav>
+      <AppNavbar />
 
       {/* Main content */}
       <main className="flex-1 p-8 mx-auto w-full max-w-6xl">

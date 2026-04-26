@@ -5,6 +5,7 @@ import { toNodeHandler } from 'better-auth/node';
 import { auth } from './lib/auth';
 import { requireAuth } from './middleware/requireAuth';
 import { requireAdmin } from './middleware/requireAdmin';
+import prisma from './db';
 
 dotenv.config();
 
@@ -36,6 +37,23 @@ app.get('/api/health', (req, res) => {
 app.get('/api/me', requireAuth, (req, res) => {
   const { token, ...safeSession } = req.session as any;
   res.json({ user: req.user, session: safeSession });
+});
+
+app.get('/api/users', requireAuth, requireAdmin, async (req, res) => {
+  const users = await prisma.user.findMany({
+    select: {
+      id: true,
+      name: true,
+      email: true,
+      role: true,
+      createdAt: true,
+    },
+    orderBy: {
+      createdAt: 'asc',
+    },
+  });
+
+  res.json({ users });
 });
 
 app.get('/api/admin', requireAdmin, (req, res) => {

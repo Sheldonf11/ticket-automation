@@ -22,8 +22,9 @@ export const AdminRoute: React.FC<AdminRouteProps> = ({ children }) => {
     return <Navigate to="/login" replace />;
   }
 
-  // @ts-ignore: role is an additionalField not yet patched in client types
-  if (session.user?.role !== 'admin') {
+  const userRole = (session.user as { role?: string } | undefined)?.role;
+
+  if (userRole !== 'admin') {
     return <Navigate to="/" replace />;
   }
 
